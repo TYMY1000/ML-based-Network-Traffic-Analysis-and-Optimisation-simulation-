@@ -24,21 +24,7 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
 *  Visualizations: loss curves, confusion matrices, and metric comparison charts
 *  Prepared for further expansion into intelligent traffic control systems
 
-## 🗂 Project Structure
 
-```
-.
-├── train_model.py                # Main training script
-├── your_dataset.csv              # Dataset with 'Jitter' and 'Target' columns
-├── model/
-│   ├── network_traffic_model.pth # Saved model weights
-│   ├── scaler.pkl                # Scaler for input normalization
-│   ├── meta_loss_plot.png        # Training loss graph
-│   ├── confusion_matrix_train.png
-│   ├── confusion_matrix_test.png
-│   ├── metrics_comparison.png
-│   └── metrics_report.txt        # Detailed evaluation report
-```
 
 
 ##  How to Run
@@ -49,7 +35,7 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
    pip install -r requirements.txt
    ```
 
-2. Prepare your dataset in CSV format with two columns: `Jitter` and `Target`.
+2. Prepare your dataset in CSV 
 
 3. Run the training script:
 
