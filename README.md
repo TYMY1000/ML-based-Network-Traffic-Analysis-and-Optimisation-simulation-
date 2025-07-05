@@ -1,6 +1,5 @@
 # ML-based-Network-Traffic-Analysis-and-Optimisation-simulation-
-using MAML and MLP for network classification 
-Sure! Below is the complete `README.md` content written in one block of text, ready for you to copy and paste into your GitHub repository:
+
 
 ---
 
