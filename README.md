@@ -16,13 +16,13 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
 * **Training Strategy**: MAML with stratified sampling
 * **Goal**: Improve traffic classification and prepare for integration into real-time optimization tools
 
-## ✨ Features
+##  Features
 
-* ✅ Adaptive MAML loop for meta-learning
-* ⚖️ Class-weighted loss & stratified sampling to handle class imbalance
-* 📊 Evaluation metrics include accuracy, precision, recall, F1-score, and ROC AUC
-* 📈 Visualizations: loss curves, confusion matrices, and metric comparison charts
-* 🔧 Prepared for further expansion into intelligent traffic control systems
+*  Adaptive MAML loop for meta-learning
+*  Class-weighted loss & stratified sampling to handle class imbalance
+*  Evaluation metrics include accuracy, precision, recall, F1-score, and ROC AUC
+*  Visualizations: loss curves, confusion matrices, and metric comparison charts
+*  Prepared for further expansion into intelligent traffic control systems
 
 ## 🗂 Project Structure
 
@@ -41,7 +41,7 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
 ```
 
 
-## ⚙️ How to Run
+##  How to Run
 
 1. Install dependencies:
 
