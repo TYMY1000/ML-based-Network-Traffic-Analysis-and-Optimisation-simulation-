@@ -1,0 +1,36 @@
+
+===== Train Metrics =====
+Accuracy: 0.2000
+Precision: 0.2107
+Recall: 0.2000
+F1 Score: 0.1805
+ROC AUC: 0.4897
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.50      0.20      0.29         5
+           1       0.21      0.38      0.27         8
+           2       0.00      0.00      0.00         7
+
+    accuracy                           0.20        20
+   macro avg       0.24      0.19      0.19        20
+weighted avg       0.21      0.20      0.18        20
+
+
+===== Test Metrics =====
+Accuracy: 0.4000
+Precision: 0.4000
+Recall: 0.4000
+F1 Score: 0.4000
+ROC AUC: 0.5556
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00         2
+           1       0.00      0.00      0.00         1
+           2       0.00      0.00      0.00         2
+
+    accuracy                           0.40         5
+   macro avg       0.33      0.33      0.33         5
+weighted avg       0.40      0.40      0.40         5
+

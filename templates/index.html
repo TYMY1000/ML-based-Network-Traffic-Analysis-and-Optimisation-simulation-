@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Network Congestion Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    /* Top Navbar */
+    header {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
+      user-select: none;
+    }
+
+    /* Main container */
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-gap: 1.8rem;
+      align-items: start;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.07);
+      padding: 1.4rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .card h3 {
+      margin: 0 0 0.6rem 0;
+      font-weight: 600;
+      color: #34495e;
+    }
+    .card p {
+      font-size: 1.3rem;
+      margin: 0;
+      font-weight: 700;
+      color: #27ae60;
+    }
+    .card.error p {
+      color: #e74c3c;
+    }
+
+    /* Buttons */
+    .btn-group {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #2980b9;
+      border: none;
+      padding: 0.75rem 1.8rem;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      box-shadow: 0 4px 8px rgb(41 128 185 / 0.3);
+      min-width: 140px;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #1c5980;
+      box-shadow: 0 6px 14px rgb(28 89 128 / 0.5);
+    }
+    button:focus {
+      outline: 3px solid #2980b9;
+      outline-offset: 2px;
+    }
+
+    /* Status & details container */
+    #details {
+      grid-column: 1 / -1;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.08);
+      max-height: 280px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      color: #34495e;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #ecf0f1;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    /* Chart styling */
+    #trafficChart {
+      grid-column: 1 / -1;
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.07);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Network Congestion Monitor
+  </header>
+  <main>
+    <div class="btn-group">
+      <button id="startBtn" onclick="startMonitoring()">▶ Start Monitoring</button>
+      <button id="stopBtn" onclick="stopMonitoring()">■ Stop Monitoring</button>
+      <button id="optimizeBtn" onclick="toggleOptimization()">⚙ Start Optimization</button>
+    </div>
+
+    <div class="card" id="statusCard">
+      <h3>Status</h3>
+      <p id="status">Not started</p>
+    </div>
+    <div class="card" id="qosCard">
+      <h3>QoS Action</h3>
+      <p id="qosAction">N/A</p>
+    </div>
+    <div class="card" id="jitterCard">
+      <h3>Latest Jitter (ms)</h3>
+      <p id="latestJitter">--</p>
+    </div>
+
+    <canvas id="trafficChart" width="900" height="350"></canvas>
+
+    <section id="details">No data yet.</section>
+  </main>
+
+  <script>
+    let intervalId = null;
+    const labels = [];
+    const jitterData = [];
+    let optimizationEnabled = false;
+
+    const chart = new Chart(document.getElementById('trafficChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Jitter (ms)',
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.2)',
+            fill: true,
+            data: jitterData,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 7,
+          }
+        ]
+      },
+      options: {
+        animation: false,
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              color: '#34495e',
+              font: { weight: '600', size: 14 }
+            }
+          },
+          tooltip: {
+            enabled: true,
+            mode: 'nearest',
+            intersect: false,
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Time (HH:MM:SS)', color: '#7f8c8d', font: { size: 14 } },
+            ticks: { color: '#7f8c8d' },
+            grid: { color: '#ecf0f1' }
+          },
+          y: {
+            title: { display: true, text: 'Jitter (ms)', color: '#7f8c8d', font: { size: 14 } },
+            beginAtZero: true,
+            ticks: { color: '#7f8c8d' },
+            grid: { color: '#ecf0f1' }
+          }
+        }
+      }
+    });
+
+    function formatInputData(data) {
+      let html = '<table>';
+      html += '<thead><tr><th>Feature</th><th>Value</th></tr></thead><tbody>';
+      for (const [key, value] of Object.entries(data)) {
+        html += `<tr><td>${key}</td><td>${parseFloat(value).toFixed(4)}</td></tr>`;
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function fetchData() {
+      fetch('/predict')
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('status').innerHTML = `<span style="color:#e74c3c;">Error: ${data.error}</span>`;
+            document.getElementById('details').innerHTML = '';
+            document.getElementById('status').innerText = "Error";
+            document.getElementById('qosAction').innerText = "N/A";
+            document.getElementById('latestJitter').innerText = "--";
+            return;
+          }
+
+          document.getElementById('status').innerText = data.prediction;
+          document.getElementById('qosAction').innerText = data.optimization || "N/A";
+          const jitterValue = parseFloat(data.input["Jitter"]).toFixed(3);
+          document.getElementById('latestJitter').innerText = jitterValue;
+
+          document.getElementById('details').innerHTML = formatInputData(data.input);
+
+          const time = new Date().toLocaleTimeString();
+          labels.push(time);
+          jitterData.push(jitterValue);
+
+          if (labels.length > 10) {
+            labels.shift();
+            jitterData.shift();
+          }
+          chart.update();
+        })
+        .catch(() => {
+          document.getElementById('status').innerHTML = `<span style="color:#e74c3c;">Error fetching data</span>`;
+          document.getElementById('details').innerHTML = '';
+          document.getElementById('status').innerText = "Error";
+          document.getElementById('qosAction').innerText = "N/A";
+          document.getElementById('latestJitter').innerText = "--";
+        });
+    }
+
+    function startMonitoring() {
+      if (intervalId) clearInterval(intervalId);
+      fetchData();
+      intervalId = setInterval(fetchData, 5000);
+      document.getElementById('status').innerText = "Monitoring...";
+    }
+
+    function stopMonitoring() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        document.getElementById('status').innerText = "Monitoring stopped.";
+      }
+    }
+
+    function toggleOptimization() {
+      fetch("/optimize", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          optimizationEnabled = data.active;
+          const btn = document.getElementById("optimizeBtn");
+          btn.innerText = optimizationEnabled ? "🛑 Stop Optimization" : "⚙ Start Optimization";
+          document.getElementById('qosAction').innerText = optimizationEnabled ? "Optimization Active" : "Optimization Stopped";
+        })
+        .catch(() => {
+          alert("Failed to toggle optimization.");
+        });
+    }
+  </script>
+</body>
+</html>
