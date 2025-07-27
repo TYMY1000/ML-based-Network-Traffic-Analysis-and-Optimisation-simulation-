@@ -9,8 +9,8 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
 
 ##  Overview
 
-* **Input Feature**: Jitter
-* **Target Output**: Traffic Classes (e.g., 0 = Real-time traffic, 1 = Bulk transfer, 2 = Normal browsing)
+* **Input Feature**: Jitter(can be trained with other features of choice )
+* **Target Output**: congestion intensity ( can be changed to another output)
 * **Core Model**: PyTorch-based MLP
 * **Training Strategy**: MAML with stratified sampling
 * **Goal**: Improve traffic classification and prepare for integration into real-time optimization tools
