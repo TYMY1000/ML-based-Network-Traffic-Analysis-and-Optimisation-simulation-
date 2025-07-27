@@ -53,7 +53,7 @@ This project applies **Model-Agnostic Meta-Learning (MAML)** combined with a **M
 
 ## Author
 
-**Awomolo TRotimi**
-Feel free to connect or contribute!
+**Awomolo Rotimi**
+
 
 
